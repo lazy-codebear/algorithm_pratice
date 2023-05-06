@@ -132,6 +132,58 @@ public class string {
         }
         return 0;
     }
+    public int strStr(String haystack, String needle) {
+        int length = needle.length();
+        int total = haystack.length() - needle.length() + 1;
+        for (int i=0; i < total; i++){
+            if (haystack.substring(i, i + length).equals(needle)){
+                return i;
+            }
+        }
+        return -1;
+    }
+    public String countAndSay(int n) {
+        if (n == 1){
+            return "1";
+        }
+        String previous = countAndSay(n-1);
+        char front = previous.charAt(0);
+        StringBuilder output = new StringBuilder();
+        int count = 0;
+        int i = 0;
+        for (; i < previous.length(); i++){
+            if (front == previous.charAt(i)){
+                count++;
+            }else {
+                output.append((char)(count + 48));
+                count = 0;
+                output.append(front);
+                front = previous.charAt(i--);
+            }
+        }
+
+        output.append((char)(count + 48));
+        output.append(previous.charAt(previous.length()-1));
+        return output.toString();
+    }
+    public String longestCommonPrefix(String[] strs) {
+        String str = strs[0];
+        if (strs.length == 1){
+            return str;
+        }
+        String substr = "";
+        for (int i=0; i < str.length(); i++){
+            String temp = str.substring(0, i+1);
+            for (int j=1; j < strs.length; j++){
+                if (strs[j].length() <= i || !strs[j].substring(0, i + 1).equals(temp)){
+                    return substr;
+                }else if (j == strs.length-1){
+                    substr = temp;
+                }
+            }
+        }
+        return substr;
+    }
     public static void main(String[] args) {
         myAtoi("-91283472332");
     }
