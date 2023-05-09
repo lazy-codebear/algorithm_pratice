@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Stack;
+import java.util.*;
 
 public class tree {
     public int maxDepth(TreeNode root) {
@@ -104,7 +102,58 @@ public class tree {
         //然后左子节点的左子节点和右子节点的右子节点比较，左子节点的右子节点和右子节点的左子节点比较
         return isSymmetricHelper(left.left, right.right) && isSymmetricHelper(left.right, right.left);
     }
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        if (root == null){
+            return new ArrayList<>();
+        }
+        Queue<TreeNode> queue = new LinkedList<>();
+        Queue<Integer> level_queue = new LinkedList<>();
+        List<List<Integer>> levelOrder = new ArrayList<>();
+        List<Integer> list = new ArrayList<>();
+        queue.offer(root);
+        level_queue.offer(1);
+        int now_level = 1;
+        while (!queue.isEmpty()){
+            TreeNode temp = queue.poll();
+            int level = level_queue.poll();
+            if (level == now_level){
+                list.add(temp.val);
+            }else {
+                levelOrder.add(list);
+                list = new ArrayList<>();
+                list.add(temp.val);
+                now_level = level;
+            }
+            if (temp.left != null){
+                queue.offer(temp.left);
+                level_queue.offer(level+1);
+            }
+            if (temp.right != null){
+                queue.offer(temp.right);
+                level_queue.offer(level+1);
+            }
+        }
+        levelOrder.add(list);
+        return levelOrder;
+    }
 
+    public TreeNode sortedArrayToBST(int[] nums) {
+        if (nums == null || nums.length==0){
+            return null;
+        }
+        return creatBST(nums, 0, nums.length-1);
+    }
+    public TreeNode creatBST(int[] nums, int left, int right){
+        int mid =  (left + right) / 2;
+        TreeNode root = new TreeNode(nums[mid]);
+        if (left != mid){
+            root.left = creatBST(nums, left, mid - 1);
+        }
+        if (mid != right){
+            root.right = creatBST(nums, mid + 1, right);
+        }
+        return root;
+    }
     public static void main(String[] args) {
         TreeNode node1 = new TreeNode(1);
         TreeNode node2_1 = new TreeNode(2);
