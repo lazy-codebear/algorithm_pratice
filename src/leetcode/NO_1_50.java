@@ -40,7 +40,7 @@ public class NO_1_50 {
     }
 
     // NO.3
-    public static int lengthOfLongestSubstring(String s) {
+    public int lengthOfLongestSubstring(String s) {
         HashMap<Character, Integer> char_set = new HashMap<>();
         int max_length = 0;
         int length = 0;
@@ -79,7 +79,6 @@ public class NO_1_50 {
         node6.next = node7;
         node7.next = node8;
         node9.next = node10;
-        lengthOfLongestSubstring("dvdf");
     }
 }
 
