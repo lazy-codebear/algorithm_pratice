@@ -216,6 +216,93 @@ public class NO_1_50 {
         }
         return max_area;
     }
+
+    // NO.12 整数转罗马数字
+    public static String intToRoman(int num) {
+        int devider = 1000;
+        StringBuilder result = new StringBuilder();
+        while (devider > 0){
+            int temp = num / devider;
+            if (temp != 0){
+                result.append(getRoman(temp, devider));
+            }
+            num -= temp * devider;
+            devider /= 10;
+        }
+        return result.toString();
+    }
+    public static String getRoman(int num, int devider){
+        StringBuilder result = new StringBuilder();
+        char[] romans = {'I', 'V', 'X', 'L', 'C', 'D', 'M'};
+        int index = -1;
+        switch (devider){
+            case 1000 -> index = 6;
+            case 100 -> index = 4;
+            case 10 -> index = 2;
+            case 1 -> index = 0;
+        }
+        if (num >= 5){
+            if (num < 9){
+                result.append(romans[index + 1]);
+                while (num > 5){
+                    result.append(romans[index]);
+                    num--;
+                }
+            }else {
+                result.append(romans[index]);
+                result.append(romans[index + 2]);
+            }
+        }else {
+            if (num < 4){
+                while (num > 0){
+                    result.append(romans[index]);
+                    num--;
+                }
+            }else {
+                result.append(romans[index]);
+                result.append(romans[index + 1]);
+            }
+        }
+        return result.toString();
+    }
+
+    // NO.13 罗马数字转整数
+    public int romanToInt(String s) {
+        int length = s.length();
+        if (length < 2){
+            return getNum(s.charAt(0));
+        }
+        int result = 0;
+        for (int i = 0; i < length; i++){
+            int num1 = getNum(s.charAt(i));
+            int num2 = 0;
+            if (i + 1 < length){
+                num2 = getNum(s.charAt(i + 1));
+            }
+            if (num1 < num2){
+                result += num2 - num1;
+                i++;
+            }else {
+                result += num1;
+            }
+        }
+        return result;
+    }
+    public int getNum(char ch){
+        return switch (ch) {
+            case 'I' -> 1;
+            case 'V' -> 5;
+            case 'X' -> 10;
+            case 'L' -> 50;
+            case 'C' -> 100;
+            case 'D' -> 500;
+            case 'M' -> 1000;
+            default -> 0;
+        };
+    }
+
+    //NO.14 最长公共前缀
+
     public static void main(String[] args) {
 //        ListNode node1 = new ListNode(1);
 //        ListNode node2 = new ListNode(9);
@@ -238,6 +325,7 @@ public class NO_1_50 {
         int[] nums1 = {1, 4, 7};
         int[] nums2 = {2, 3, 8};
         int[] nums = {1,8,6,2,5,4,8,3,7};
+        intToRoman(1994);
     }
 }
 
