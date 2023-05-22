@@ -104,6 +104,8 @@ public class tree {
         //然后左子节点的左子节点和右子节点的右子节点比较，左子节点的右子节点和右子节点的左子节点比较
         return isSymmetricHelper(left.left, right.right) && isSymmetricHelper(left.right, right.left);
     }
+
+    // 层序遍历
     public List<List<Integer>> levelOrder(TreeNode root) {
         if (root == null){
             return new ArrayList<>();

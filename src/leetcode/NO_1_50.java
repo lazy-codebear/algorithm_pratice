@@ -1,7 +1,6 @@
 package leetcode;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 
 public class NO_1_50 {
     // NO.2
@@ -301,8 +300,93 @@ public class NO_1_50 {
         };
     }
 
-    //NO.14 最长公共前缀
+    //NO.14 最长公共前缀 practice/string/longestCommonPrefix
 
+    //NO.15 三数之和
+    public List<List<Integer>> threeSum(int[] nums){
+        Arrays.sort(nums);
+        List<List<Integer>> result = new ArrayList<>();
+        for (int i = 0; i < nums.length && nums[i] <= 0; i++){
+            if (i > 0 && nums[i] == nums[i - 1]){
+                continue;
+            }
+            for (int j = nums.length - 1; j >=0 &&nums[j] >= 0; j--){
+                if (j < nums.length - 1 && nums[j] == nums[j + 1]){
+                    continue;
+                }
+                int sum = nums[i] + nums[j];
+                if (binarySearch(nums, i + 1, j - 1, -sum)){
+                    List<Integer> list = new ArrayList<>();
+                    list.add(nums[i]);
+                    list.add(-sum);
+                    list.add(nums[j]);
+                    result.add(list);
+                }
+            }
+        }
+        return result;
+    }
+    public boolean binarySearch(int[] nums, int left, int right, int target){
+        while (left <= right){
+            int mid = (left + right) / 2;
+            if (nums[mid] < target){
+                left = mid + 1;
+            } else if (nums[mid] > target) {
+                right = mid - 1;
+            }else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // NO.16 最接近的三数之和
+    public int threeSumClosest(int[] nums, int target) {
+        Arrays.sort(nums);
+        int result = nums[0] + nums[1] + nums[2];
+        for (int i = 0; i < nums.length; i++){
+            int left = i + 1, right = nums.length - 1;
+            while (left < right){
+                int sum = nums[i] + nums[left] + nums[right];
+                if (Math.abs(sum - target) < Math.abs(result - target)){
+                    result = sum;
+                }
+                if (sum > target){
+                    right--;
+                }else if (sum < target){
+                    left++;
+                }else {
+                    return result;
+                }
+            }
+        }
+        return result;
+    }
+
+    public List<String> letterCombinations(String digits) {
+        if (digits.length() == 0){
+            return new ArrayList<>();
+        }
+        char[][] table = {{'a', 'b', 'c'}, {'d', 'e', 'f'}, {'g', 'h', 'i'}, {'j', 'k', 'l'},
+                {'m', 'n', 'o'}, {'p', 'q', 'r', 's'}, {'t', 'u', 'v'}, {'w', 'x', 'y', 'z'}};
+        List<String> result = new ArrayList<>();
+        Queue<String> queue = new LinkedList<>();
+        queue.add("");
+        for (int i = digits.length() - 1; i >= 0; i--){
+            int num = digits.charAt(i) - 50;
+            int size = queue.size();
+            for (int j = 0; j < size; j++) {
+                String temp = queue.poll();
+                for (int k = 0; k < table[num].length; k++) {
+                    queue.add(table[num][k] + temp);
+                }
+            }
+        }
+        while (!queue.isEmpty()){
+            result.add(queue.poll());
+        }
+        return result;
+    }
     public static void main(String[] args) {
 //        ListNode node1 = new ListNode(1);
 //        ListNode node2 = new ListNode(9);
@@ -324,8 +408,9 @@ public class NO_1_50 {
 //        node9.next = node10;
         int[] nums1 = {1, 4, 7};
         int[] nums2 = {2, 3, 8};
-        int[] nums = {1,8,6,2,5,4,8,3,7};
-        intToRoman(1994);
+        int[] nums = {1, 1, 1, 1};
+        NO_1_50 test = new NO_1_50();
+        test.letterCombinations("23");
     }
 }
 
