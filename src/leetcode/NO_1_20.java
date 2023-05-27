@@ -2,7 +2,7 @@ package leetcode;
 
 import java.util.*;
 
-public class NO_1_50 {
+public class NO_1_20 {
     // NO.2
     public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
         ListNode head = new ListNode();
@@ -315,7 +315,7 @@ public class NO_1_50 {
                     continue;
                 }
                 int sum = nums[i] + nums[j];
-                if (binarySearch(nums, i + 1, j - 1, -sum)){
+                if (binarySearch(nums, i + 1, j - 1, -sum) != -1){
                     List<Integer> list = new ArrayList<>();
                     list.add(nums[i]);
                     list.add(-sum);
@@ -326,7 +326,7 @@ public class NO_1_50 {
         }
         return result;
     }
-    public boolean binarySearch(int[] nums, int left, int right, int target){
+    public int binarySearch(int[] nums, int left, int right, int target){
         while (left <= right){
             int mid = (left + right) / 2;
             if (nums[mid] < target){
@@ -334,10 +334,10 @@ public class NO_1_50 {
             } else if (nums[mid] > target) {
                 right = mid - 1;
             }else {
-                return true;
+                return mid;
             }
         }
-        return false;
+        return -1;
     }
 
     // NO.16 最接近的三数之和
@@ -363,6 +363,7 @@ public class NO_1_50 {
         return result;
     }
 
+    // NO.17 电话号码的字母组合
     public List<String> letterCombinations(String digits) {
         if (digits.length() == 0){
             return new ArrayList<>();
@@ -387,6 +388,74 @@ public class NO_1_50 {
         }
         return result;
     }
+
+    // NO.18 四数之和
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        Arrays.sort(nums);
+        List<List<Integer>> result = new ArrayList<>();
+        int length = nums.length;
+        for (int i = 0; i < length; i++){
+            for (int j = i + 1; j < length; j++) {
+                int left = j + 1, right = length - 1;
+                while (left < right){
+                    long sum = (long)nums[i] + (long)nums[j] + (long)nums[left] + (long)nums[right];
+                    boolean flag = false;
+                    if (sum == target){
+                        List<Integer> list = new ArrayList<>();
+                        list.add(nums[i]);
+                        list.add(nums[j]);
+                        list.add(nums[left]);
+                        list.add(nums[right]);
+                        if (result.isEmpty()){
+                            result.add(list);
+                        }else {
+                            for (List<Integer> l : result) {
+                                List<Integer> temp1 = new ArrayList<>(list);
+                                List<Integer> temp2 = new ArrayList<>(l);
+                                temp1.retainAll(l);
+                                temp2.removeAll(list);
+                                if (temp1.size() == 4 && temp2.size() == 0) {
+                                    flag = true;
+                                }
+                            }
+                            if (!flag){
+                                result.add(list);
+                            }
+                        }
+                        left++;
+                        right--;
+                    }else if (sum < target){
+                        left++;
+                    }else {
+                        right--;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    // NO.20 有效的括号
+    public boolean isValid(String s) {
+        Stack<Character> stack = new Stack<>();
+        for (int i = 0; i < s.length(); i++){
+            char temp = s.charAt(i);
+            if (temp == '(' || temp == '[' || temp == '{'){
+                stack.add(temp);
+            }else {
+                if (stack.empty()){
+                    return false;
+                }
+                char top = stack.pop();
+                if (temp == ')' && temp - 1 != top){
+                    return false;
+                }else if ((temp == ']' || temp == '}') && temp - 2 != top){
+                    return false;
+                }
+            }
+        }
+        return stack.empty();
+    }
     public static void main(String[] args) {
 //        ListNode node1 = new ListNode(1);
 //        ListNode node2 = new ListNode(9);
@@ -408,9 +477,9 @@ public class NO_1_50 {
 //        node9.next = node10;
         int[] nums1 = {1, 4, 7};
         int[] nums2 = {2, 3, 8};
-        int[] nums = {1, 1, 1, 1};
-        NO_1_50 test = new NO_1_50();
-        test.letterCombinations("23");
+        int[] nums = {1000000000,1000000000,1000000000,1000000000};
+        NO_1_20 test = new NO_1_20();
+        test.isValid("()");
     }
 }
 
