@@ -82,9 +82,13 @@ public class NO_21_40 {
 
     // NO.27 移除元素
     public int removeElement(int[] nums, int val) {
-        int result = 0;
-
-        return result;
+        int slow = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] != val){
+                nums[slow++] = nums[i];
+            }
+        }
+        return slow;
     }
     public static void main(String[] args) {
         NO_21_40 test = new NO_21_40();

@@ -3,6 +3,21 @@ package leetcode;
 import java.util.*;
 
 public class NO_1_20 {
+    // NO.1
+    public int[] twoSum(int[] nums, int target) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int[] result = new int[2];
+        for (int i = 0; i < nums.length; i++) {
+            if (map.containsKey(target - nums[i])){
+                result[0] = map.get(target - nums[i]);
+                result[1] = i;
+                return result;
+            }else {
+                map.put(nums[i], i);
+            }
+        }
+        return result;
+    }
     // NO.2
     public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
         ListNode head = new ListNode();
@@ -340,6 +355,35 @@ public class NO_1_20 {
         return -1;
     }
 
+    public List<List<Integer>> threeSum2(int[] nums){
+        Arrays.sort(nums);
+        List<List<Integer>> result = new ArrayList<>();
+        for (int i = 0; i < nums.length; i++){
+            if (nums[i] > 0){
+                return result;
+            }
+            if (i > 0 && nums[i] == nums[i - 1]){
+                continue;
+            }
+            int left = i + 1, right =nums.length - 1;
+            while (left < right){
+                if (nums[i] + nums[left] + nums[right] > 0){
+                    right--;
+                }else if (nums[i] + nums[left] + nums[right] < 0){
+                    left++;
+                }else {
+                    List<Integer> list = Arrays.asList(nums[i], nums[left], nums[right]);
+                    result.add(list);
+                    while (left < right && nums[left] == nums[left + 1]) left++;
+                    while (left < right && nums[right] == nums[right - 1]) right--;
+                    right--;
+                    left++;
+                }
+            }
+        }
+        return result;
+    }
+
     // NO.16 最接近的三数之和
     public int threeSumClosest(int[] nums, int target) {
         Arrays.sort(nums);
@@ -456,30 +500,45 @@ public class NO_1_20 {
         }
         return stack.empty();
     }
+    public ListNode reverseList(ListNode head) {
+        if (head == null){
+            return null;
+        }
+        ListNode pre = null;
+        ListNode cur = head;
+        while(cur != null){
+            ListNode temp = cur.next;
+            cur.next = pre;
+            pre = cur;
+            cur = temp;
+        }
+        return pre;
+    }
+
     public static void main(String[] args) {
-//        ListNode node1 = new ListNode(1);
-//        ListNode node2 = new ListNode(9);
-//        ListNode node3 = new ListNode(9);
-//        ListNode node4 = new ListNode(9);
-//        ListNode node5 = new ListNode(9);
+        ListNode node1 = new ListNode(1);
+        ListNode node2 = new ListNode(2);
+        ListNode node3 = new ListNode(3);
+        ListNode node4 = new ListNode(4);
+        ListNode node5 = new ListNode(5);
 //        ListNode node6 = new ListNode(9);
 //        ListNode node7 = new ListNode(9);
 //        ListNode node8 = new ListNode(9);
 //        ListNode node9 = new ListNode(9);
 //        ListNode node10 = new ListNode(9);
-//        node1.next = node2;
-//        node2.next = node3;
-//        node3.next = node4;
-//        node4.next = node5;
+        node1.next = node2;
+        node2.next = node3;
+        node3.next = node4;
+        node4.next = node5;
 //        node5.next = node6;
 //        node6.next = node7;
 //        node7.next = node8;
 //        node9.next = node10;
-        int[] nums1 = {1, 4, 7};
+        int[] nums1 = {2, 4, 11, 3};
         int[] nums2 = {2, 3, 8};
         int[] nums = {1000000000,1000000000,1000000000,1000000000};
         NO_1_20 test = new NO_1_20();
-        test.isValid("()");
+        test.twoSum(nums1, 6);
     }
 }
 

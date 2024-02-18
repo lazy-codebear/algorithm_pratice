@@ -1,6 +1,5 @@
 package leetcode;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class NO_41_60 {
     // 54.螺旋矩阵
@@ -87,4 +86,42 @@ public class NO_41_60 {
         }
         return result == Integer.MAX_VALUE ? 0 : result;
     }
+
+    // 344.反转字符串
+    public void reverseString(char[] s) {
+        int i = 0, j = s.length - 1;
+        while (i < j){
+            char temp = s[i];
+            s[i++] = s[j];
+            s[j--] = temp;
+        }
+    }
+
+    // 454.四数相加 2
+    public int fourSumCount(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int result = 0;
+        for (int i = 0; i < nums1.length; i++){
+            for (int j = 0; j < nums2.length; j++){
+                int temp = nums1[i] + nums2[j];
+                if (map.containsKey(temp)){
+                    map.put(temp, map.get(temp) + 1);
+                }else {
+                    map.put(temp, 1);
+                }
+            }
+        }
+        for (int i = 0; i < nums3.length; i++){
+            for (int j = 0; j < nums4.length; j++){
+                int target = nums3[i] + nums4[j];
+                if (map.containsKey(-target)){
+                    result += map.get(-target);
+                }
+            }
+        }
+        return result;
+    }
+
+    // 514.反转字符串
+
 }
