@@ -72,6 +72,48 @@ public class NO_41_60 {
         return result;
     }
 
+    // 151.反转字符串中的单词 还可以从后向前遍历，找到单词开始与结束的位置加入StringBuilder
+    public String reverseWords(String s) {
+        StringBuilder str = removeSpace(s);
+        reverseStr(str, 0, str.length() - 1);
+        reverseWord(str);
+        return str.toString();
+    }
+    public StringBuilder removeSpace(String s){
+        StringBuilder str = new StringBuilder();
+        int start = 0, end = s.length() - 1;
+        while (s.charAt(start) == ' ') start++;
+        while (s.charAt(end) == ' ') end--;
+        while (start <= end){
+            char temp = s.charAt(start);
+            if (temp != ' ' || s.charAt(start - 1) != ' '){
+                str.append(temp);
+            }
+            start++;
+        }
+        return str;
+    }
+
+    public void reverseStr(StringBuilder str, int start, int end){
+        while (start < end){
+            char temp = str.charAt(start);
+            str.setCharAt(start++, str.charAt(end));
+            str.setCharAt(end--, temp);
+        }
+    }
+    public void reverseWord(StringBuilder str){
+        int start = 0, end = 0;
+        while (end < str.length()){
+            if (str.charAt(end) != ' '){
+                end++;
+            }
+            if(end == str.length() || str.charAt(end) == ' '){
+                reverseStr(str, start, end - 1);
+                start = end + 1;
+                end++;
+            }
+        }
+    }
     // 209.长度最小的子数组
     public int minSubArrayLen(int target, int[] nums) {
         int begin = 0;
@@ -122,6 +164,23 @@ public class NO_41_60 {
         return result;
     }
 
-    // 514.反转字符串
+    // 514.反转字符串 2
+    public String reverseStr(String s, int k) {
+        char[] str = s.toCharArray();
+        for (int i = 0; i < str.length; i += 2 * k){
+            int start = i;
+            int end = Math.min(s.length() - 1, start + k - 1);
+            while (start < end){
+                char temp = str[start];
+                str[start++] = str[end];
+                str[end--] = temp;
+            }
+        }
+        return String.valueOf(str);
+    }
 
+    public static void main(String[] args) {
+        NO_41_60 test = new NO_41_60();
+        test.reverseWords("  hello   world  ");
+    }
 }
