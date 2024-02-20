@@ -72,6 +72,32 @@ public class NO_41_60 {
         return result;
     }
 
+    // 150.逆波兰表达式求值
+    public int evalRPN(String[] tokens) {
+        Stack<Integer> stack = new Stack<>();
+        for (int i = 0; i < tokens.length; i++){
+            String temp = tokens[i];
+            if (temp.equals("+") || temp.equals("-") || temp.equals("*") || temp.equals("/")){
+                int num2 = stack.pop();
+                int num1 = stack.pop();
+                stack.add(compute(num1, num2, temp.charAt(0)));
+            }else {
+                stack.add(Integer.parseInt(temp));
+            }
+        }
+        return stack.pop();
+    }
+    public int compute(int num1, int num2, char opt){
+        if (opt == '+'){
+            return num1 + num2;
+        } else if (opt == '-') {
+            return num1 - num2;
+        }else if (opt == '*'){
+            return num1 * num2;
+        }else {
+            return num1 / num2;
+        }
+    }
     // 151.反转字符串中的单词 还可以从后向前遍历，找到单词开始与结束的位置加入StringBuilder
     public String reverseWords(String s) {
         StringBuilder str = removeSpace(s);
@@ -128,7 +154,45 @@ public class NO_41_60 {
         }
         return result == Integer.MAX_VALUE ? 0 : result;
     }
-
+    // 239.滑动窗口的最大值 使用Deque模拟一个单调队列，保持队列头始终为最大值
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        int[] result = new int[nums.length - k + 1];
+        NewQueue my_queue = new NewQueue();
+        int count = 0;
+        for (int i = 0; i < k; i++) {
+            my_queue.push(nums[i]);
+        }
+        result[count++] = my_queue.front();
+        for (int i = k; i < nums.length; i++){
+            my_queue.pop(nums[i - k]);
+            my_queue.push(nums[i]);
+            result[count++] = my_queue.front();
+        }
+        return result;
+    }
+    class NewQueue{
+        Deque<Integer> deque;
+        public NewQueue(){
+            deque = new LinkedList<>();
+        }
+        public void push(int a){
+            if (deque.isEmpty()){
+                deque.offerFirst(a);
+            }else {
+                while (!deque.isEmpty() && deque.peekLast() < a){
+                    deque.pollLast();
+                }
+                deque.offerLast(a);
+            }
+        }
+        public void pop(int value){
+            if (!deque.isEmpty() && deque.peekFirst() == value)
+                deque.pollFirst();
+        }
+        public int front(){
+            return deque.peekFirst();
+        }
+    }
     // 344.反转字符串
     public void reverseString(char[] s) {
         int i = 0, j = s.length - 1;
@@ -164,6 +228,31 @@ public class NO_41_60 {
         return result;
     }
 
+    // 459.重复的子字符串
+    public boolean repeatedSubstringPattern(String s) {
+        int len = s.length();
+        int[] next = new int[len];
+        getNext(next, s);
+        int end = next[len - 1] + 1;
+        if (end != 0 && len % (len - end) == 0){
+            return true;
+        }
+        return false;
+    }
+    public void getNext(int[] next, String s){
+        int j = -1;
+        next[0] = j;
+        for (int i = 1; i < s.length(); i++) {
+            while (j >= 0 && s.charAt(i) != s.charAt(j + 1)){
+                j = next[j];
+            }
+            if (s.charAt(i) == s.charAt(j + 1)){
+                j++;
+            }
+            next[i] = j;
+        }
+    }
+
     // 514.反转字符串 2
     public String reverseStr(String s, int k) {
         char[] str = s.toCharArray();
@@ -179,8 +268,93 @@ public class NO_41_60 {
         return String.valueOf(str);
     }
 
+
     public static void main(String[] args) {
         NO_41_60 test = new NO_41_60();
-        test.reverseWords("  hello   world  ");
+        int[] nums = {1,3,-1,-3,5,3,6,7};
+        test.maxSlidingWindow(nums, 3);
+    }
+}
+
+// 232.用栈实现队列
+class MyQueue {
+    Stack<Integer> stack1;
+    Stack<Integer> stack2;
+    public MyQueue() {
+        stack1 = new Stack<>();
+        stack2 = new Stack<>();
+    }
+
+    public void push(int x) {
+        stack1.push(x);
+    }
+
+    public int pop() {
+        if (stack2.isEmpty()){
+            while (!stack1.isEmpty()){
+                stack2.push(stack1.pop());
+            }
+        }
+        return stack2.pop();
+    }
+
+    public int peek() {
+        if (stack2.isEmpty()){
+            while (!stack1.isEmpty()){
+                stack2.push(stack1.pop());
+            }
+        }
+        return stack2.peek();
+    }
+
+    public boolean empty() {
+        return stack2.isEmpty();
+    }
+}
+
+// 235.用队列实现栈 可以仅使用一个队列实现，将队列中除最后一个元素外再次加入队列
+class MyStack {
+    Queue<Integer> queue1;
+    Queue<Integer> queue2;
+    public MyStack() {
+        queue1 = new LinkedList<>();
+        queue2 = new LinkedList<>();
+    }
+
+    public void push(int x) {
+        queue1.offer(x);
+    }
+
+    public int pop() {
+        int res = 0;
+        while (!queue1.isEmpty()){
+            if (queue1.size() == 1){
+                res = queue1.poll();
+            }else {
+                queue2.offer(queue1.poll());
+            }
+        }
+        while (!queue2.isEmpty()){
+            queue1.offer(queue2.poll());
+        }
+        return res;
+    }
+
+    public int top() {
+        int res = 0;
+        while (!queue1.isEmpty()){
+            queue2.offer(queue1.poll());
+            if (queue1.size() == 1){
+                res = queue1.peek();
+            }
+        }
+        while (!queue2.isEmpty()){
+            queue1.offer(queue2.poll());
+        }
+        return res;
+    }
+
+    public boolean empty() {
+        return queue1.isEmpty() && queue2.isEmpty();
     }
 }

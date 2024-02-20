@@ -500,6 +500,29 @@ public class NO_1_20 {
         }
         return stack.empty();
     }
+
+    public boolean isValid1(String s) {
+        Stack<Character> stack = new Stack<>();
+        for (int i = 0; i < s.length(); i++){
+            char temp = s.charAt(i);
+            if (temp == ')' || temp == ']' || temp == '}'){
+                if (stack.isEmpty()){
+                    return false;
+                }
+                char top = stack.pop();
+                if (temp == ')' && top != '('){
+                    return false;
+                } else if (temp == ']' && top != '[') {
+                    return false;
+                } else if (temp == '}' && top != '{') {
+                    return false;
+                }
+            }else {
+                stack.add(temp);
+            }
+        }
+        return stack.isEmpty();
+    }
     public ListNode reverseList(ListNode head) {
         if (head == null){
             return null;
@@ -538,7 +561,7 @@ public class NO_1_20 {
         int[] nums2 = {2, 3, 8};
         int[] nums = {1000000000,1000000000,1000000000,1000000000};
         NO_1_20 test = new NO_1_20();
-        test.twoSum(nums1, 6);
+        test.isValid1("(({})[])");
     }
 }
 
