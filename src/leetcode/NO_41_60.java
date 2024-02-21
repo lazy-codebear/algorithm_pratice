@@ -2,6 +2,35 @@ package leetcode;
 import java.util.*;
 
 public class NO_41_60 {
+    // 42.接雨水 使用单调递减栈，栈中最后一个元素作为底部
+    public int trap(int[] height) {
+        int result = 0;
+        Deque<Integer> deque = new LinkedList<>();
+        for (int i = 0; i < height.length; i++){
+            if (!deque.isEmpty()){
+                while (!deque.isEmpty() && height[deque.peekLast()] < height[i]){
+                    int bottom_index = deque.pollLast();
+                    if (!deque.isEmpty()){
+                        int height1_index = deque.peekLast();
+                        int height1 = height[height1_index];
+                        int height2 = height[i];
+                        if (height1 > height2){
+                            result += (height2 - height[bottom_index]) * (i - height1_index - 1);
+                        }else {
+                            result += (height1 - height[bottom_index]) * (i - height1_index - 1);
+                        }
+                    }
+                }
+                while (!deque.isEmpty() && height[deque.peekLast()] <= height[i])
+                    deque.pollLast();
+                deque.offerLast(i);
+            }else {
+                deque.offerLast(i);
+            }
+        }
+        return result;
+    }
+
     // 54.螺旋矩阵
     public List<Integer> spiralOrder(int[][] matrix) {
         List<Integer> result = new ArrayList<>();
@@ -203,6 +232,35 @@ public class NO_41_60 {
         }
     }
 
+    // 347.前K个高频元素
+    public int[] topKFrequent(int[] nums, int k) {
+        int[] result = new int[k];
+        Map<Integer, Integer> count_map = new HashMap<>();
+        for (int num : nums) {
+            if (count_map.containsKey(num)) {
+                count_map.replace(num, count_map.get(num) + 1);
+            } else {
+                count_map.put(num, 1);
+            }
+        }
+        PriorityQueue<Pair> priorityQueue = new PriorityQueue<>((o1, o2) -> o2.count - o1.count);
+        for (Map.Entry<Integer, Integer> entry: count_map.entrySet()) {
+            priorityQueue.add(new Pair(entry.getKey(), entry.getValue()));
+        }
+        for (int i = 0; i < k; i++) {
+            result[i] = priorityQueue.poll().num;
+        }
+        return result;
+    }
+    class Pair{
+        int num;
+        int count;
+        public Pair(int num, int count){
+            this.num = num;
+            this.count = count;
+        }
+    }
+
     // 454.四数相加 2
     public int fourSumCount(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {
         Map<Integer, Integer> map = new HashMap<>();
@@ -271,8 +329,8 @@ public class NO_41_60 {
 
     public static void main(String[] args) {
         NO_41_60 test = new NO_41_60();
-        int[] nums = {1,3,-1,-3,5,3,6,7};
-        test.maxSlidingWindow(nums, 3);
+        int[] nums = {4,2,0,3,2,5};
+        test.trap(nums);
     }
 }
 
