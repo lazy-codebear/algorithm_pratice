@@ -2,7 +2,7 @@ package leetcode;
 import java.util.*;
 
 public class NO_41_60 {
-    // 42.接雨水 使用单调递减栈，栈中最后一个元素作为底部
+    // 42.接雨水 使用单调递减栈，栈头元素作为底部
     public int trap(int[] height) {
         int result = 0;
         Deque<Integer> deque = new LinkedList<>();
@@ -101,6 +101,150 @@ public class NO_41_60 {
         return result;
     }
 
+    //  71.简化路径
+    public String simplifyPath(String path) {
+        StringBuilder result = new StringBuilder();
+        Stack<Character> stack = new Stack<>();
+        stack.push(path.charAt(0));
+        for (int i = 1; i < path.length(); i++){
+            char temp = path.charAt(i);
+            if (temp == '/' && !stack.isEmpty() && temp == stack.peek()){
+                continue;
+            } else if (temp == '.' && stack.peek() == '/'){
+                int dot_count = 0;
+                while (i + dot_count < path.length() && path.charAt(i + dot_count) == '.'){
+                    dot_count++;
+                }
+                if (dot_count == 2 && (i + dot_count >= path.length() || path.charAt(i + dot_count) == '/')){
+                    i += 1;
+                    stack.pop();
+                    while (!stack.isEmpty() && stack.pop() != '/');
+                    continue;
+                }else if (dot_count == 1 && (i + dot_count >= path.length() || path.charAt(i + dot_count) == '/')){
+                    continue;
+                }else {
+                    for (int j = 0; j < dot_count; j++) {
+                        stack.push('.');
+                    }
+                    i += dot_count - 1;
+                    continue;
+                }
+            }
+            stack.push(path.charAt(i));
+        }
+        if (!stack.isEmpty() && stack.peek() == '/' && stack.size() > 1){
+            stack.pop();
+        }else if (stack.isEmpty()){
+            stack.push('/');
+        }
+        while (!stack.isEmpty()){
+            result.insert(0, stack.pop());
+        }
+        return result.toString();
+    }
+    public String simplifyPath_ans(String path) {   // 官方题解，使用split函数分割字符串
+        String[] names = path.split("/");
+        Deque<String> stack = new ArrayDeque<String>();
+        for (String name : names) {
+            if ("..".equals(name)) {
+                if (!stack.isEmpty()) {
+                    stack.pollLast();
+                }
+            } else if (name.length() > 0 && !".".equals(name)) {
+                stack.offerLast(name);
+            }
+        }
+        StringBuffer ans = new StringBuffer();
+        if (stack.isEmpty()) {
+            ans.append('/');
+        } else {
+            while (!stack.isEmpty()) {
+                ans.append('/');
+                ans.append(stack.pollFirst());
+            }
+        }
+        return ans.toString();
+    }
+
+    // 94.二叉树中序遍历   使用栈进行中序遍历
+    public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        Deque<TreeNode> stack = new LinkedList<>();
+        TreeNode cur = root;
+        while (cur != null || !stack.isEmpty()){
+            if (cur != null){       // 直到遍历到左下方节点，最左下方节点子节点均为null
+                stack.push(cur);
+                cur = cur.left;
+            }else {
+                cur = stack.pop();
+                result.add(cur.val);
+                cur = cur.right;
+            }
+        }
+        return result;
+    }
+
+    // 101.对称二叉树    相当于根节点的左后子树进行毕竟，左子树的左节点等于右子树的右节点，左子树的右节点等于右子树的左节点
+    public boolean isSymmetric(TreeNode root) {
+        if (root == null) return false;
+        return compare(root.left, root.right);
+    }
+    public boolean compare(TreeNode left, TreeNode right){
+        if (left == null && right != null)return false;
+        else if (left != null && right == null) return false;
+        else if (left == null && right == null) return true;
+        else if (left.val != right.val) return false;
+        // 此时左右节点都不为空且数值相同
+        boolean bool1 = compare(left.left, right.right);
+        boolean bool2 = compare(left.right, right.left);
+        return bool1 && bool2;
+    }
+
+    // 102.二叉树层序遍历
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> result = new ArrayList<>();
+        Queue<TreeNode> queue = new LinkedList<>();
+        if (root == null) return result;
+        queue.offer(root);
+        while (!queue.isEmpty()){
+            int size = queue.size();
+            List<Integer> temp_result = new ArrayList<>();
+            for (int i = 0; i < size; i++){
+                TreeNode temp = queue.poll();
+                temp_result.add(temp.val);
+                if (temp.left != null){
+                    queue.add(temp.left);
+                }
+                if (temp.right != null){
+                    queue.add(temp.right);
+                }
+            }
+            result.add(temp_result);
+        }
+        return result;
+    }
+    // 144.二叉树前序遍历
+    public List<Integer> preorderTraversal(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        traversal(root, result);
+        return result;
+    }
+    public void traversal(TreeNode node, List<Integer> result){
+        if (node == null) return;
+
+        traversal(node.left, result);
+        result.add(node.val);
+        traversal(node.right, result);
+
+    }
+
+    // 145.二叉树后序遍历
+    public List<Integer> postorderTraversal(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        traversal(root, result);
+        return result;
+    }
+
     // 150.逆波兰表达式求值
     public int evalRPN(String[] tokens) {
         Stack<Integer> stack = new Stack<>();
@@ -183,6 +327,24 @@ public class NO_41_60 {
         }
         return result == Integer.MAX_VALUE ? 0 : result;
     }
+
+    // 226.反转二叉树
+    public TreeNode invertTree(TreeNode root) {
+        if (root == null){
+            return root;
+        }
+        if (root.left != null){
+            invertTree(root.left);
+        }
+        if (root.right != null){
+            invertTree(root.right);
+        }
+        TreeNode temp = root.right;
+        root.right = root.left;
+        root.left = temp;
+        return root;
+    }
+
     // 239.滑动窗口的最大值 使用Deque模拟一个单调队列，保持队列头始终为最大值
     public int[] maxSlidingWindow(int[] nums, int k) {
         int[] result = new int[nums.length - k + 1];
@@ -329,8 +491,8 @@ public class NO_41_60 {
 
     public static void main(String[] args) {
         NO_41_60 test = new NO_41_60();
-        int[] nums = {4,2,0,3,2,5};
-        test.trap(nums);
+        TreeNode node = new TreeNode(1);
+        test.isSymmetric(node);
     }
 }
 
@@ -414,5 +576,24 @@ class MyStack {
 
     public boolean empty() {
         return queue1.isEmpty() && queue2.isEmpty();
+    }
+}
+
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+
+    TreeNode() {
+    }
+
+    TreeNode(int val) {
+        this.val = val;
+    }
+
+    TreeNode(int val, TreeNode left, TreeNode right) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
     }
 }
