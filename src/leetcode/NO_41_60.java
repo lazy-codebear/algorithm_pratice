@@ -522,6 +522,39 @@ public class NO_41_60 {
         return root;
     }
 
+    // 235.二叉搜索树的最近公共祖先
+    public TreeNode lowestCommonAncestor_BST(TreeNode root, TreeNode p, TreeNode q) {
+        if (p.val > q.val){
+            return findAncestor(root, q, p);
+        }else {
+            return findAncestor(root, p, q);
+        }
+    }
+    public TreeNode findAncestor(TreeNode root, TreeNode p, TreeNode q){
+        if (root == null) return null;
+        if (root.val >= p.val && root.val <= q.val){
+            return root;
+        }
+        TreeNode node1 = findAncestor(root.left, p, q);
+        TreeNode node2 = findAncestor(root.right, p, q);
+        return node1 == null ? node2 : node1;
+    }
+
+    // 236.二叉树的最近公共祖先
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null) return null;
+        TreeNode left_node = lowestCommonAncestor(root.left, p, q);
+        TreeNode right_node = lowestCommonAncestor(root.right, p, q);
+        if (root.val == p.val || root.val == q.val){
+            return root;
+        }
+        if (left_node != null && right_node != null){
+            return root;
+        }
+        if (left_node != null) return left_node;
+        return right_node;
+    }
+
     // 239.滑动窗口的最大值 使用Deque模拟一个单调队列，保持队列头始终为最大值
     public int[] maxSlidingWindow(int[] nums, int k) {
         int[] result = new int[nums.length - k + 1];
@@ -679,6 +712,41 @@ public class NO_41_60 {
             }
             next[i] = j;
         }
+    }
+
+    // 501.二叉搜索树中的众数
+    int count;
+    int max_count;
+    TreeNode pre;
+    public int[] findMode(TreeNode root) {
+        List<Integer> list = new ArrayList<>();
+        inorderTraverse_501(root, list);
+        int[] result = new int[list.size()];
+        for (int i = 0; i < list.size(); i++){
+            result[i] = list.get(i);
+        }
+        return result;
+    }
+    public void inorderTraverse_501(TreeNode root, List<Integer> list){
+        if (root == null) return;
+        inorderTraverse_501(root.left, list);
+        if (pre == null){
+            pre = root;
+        }
+        if (pre.val == root.val){
+            count += 1;
+        }else {
+            count = 1;
+        }
+        pre = root;
+        if (count == max_count){
+            list.add(root.val);
+        }else if (count > max_count){
+            max_count = count;
+            list.clear();
+            list.add(root.val);
+        }
+        inorderTraverse_501(root.right, list);
     }
 
     // 514.反转字符串 2
