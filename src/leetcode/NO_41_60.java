@@ -317,6 +317,19 @@ public class NO_41_60 {
         return root;
     }
 
+    // 108.将有序数组转换为二叉搜索树
+    public TreeNode sortedArrayToBST(int[] nums) {
+        if (nums.length == 0) return null;
+        return getRoot(nums, 0, nums.length - 1);
+    }
+    public TreeNode getRoot(int[] nums, int left, int right){
+        int mid = (left + right) / 2;
+        TreeNode root = new TreeNode(nums[mid]);
+        if (left <= mid - 1) root.left = getRoot(nums, left, mid - 1);
+        if (right >= mid + 1) root.right = getRoot(nums, mid + 1, right);
+        return root;
+    }
+
     // 110.平衡二叉树
     public boolean isBalanced(TreeNode root) {
         int result = getDepth(root);
@@ -664,6 +677,32 @@ public class NO_41_60 {
         }
     }
 
+    // 450.删除二叉搜索树中的节点
+    public TreeNode deleteNode(TreeNode root, int key) {
+        if (root == null) return null;
+        if (root.val == key && root.left == null && root.right == null){
+            return null;
+        }
+        if (root.val == key && !(root.left != null && root.right != null)){
+            return root.left == null ? root.right : root.left;
+        }
+        if (root.val == key){
+            TreeNode temp = root.right;
+            while (temp.left != null){
+                pre = temp;
+                temp = temp.left;
+            }
+            root.val = temp.val;
+            root.right = deleteNode(root.right, root.val);
+        }
+        if (root.val > key){
+            root.left = deleteNode(root.left, key);
+        }else {
+            root.right = deleteNode(root.right, key);
+        }
+        return root;
+    }
+
     // 454.四数相加 2
     public int fourSumCount(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {
         Map<Integer, Integer> map = new HashMap<>();
@@ -784,7 +823,6 @@ public class NO_41_60 {
     // 654.最大二叉树
     public TreeNode constructMaximumBinaryTree(int[] nums) {
         int len = nums.length;
-
         return getRoot_ans(nums, 0, len - 1);
     }
 
@@ -818,6 +856,20 @@ public class NO_41_60 {
         return root;
     }
 
+    // 669.修剪二叉搜索树
+    public TreeNode trimBST(TreeNode root, int low, int high) {
+        if (root == null) return null;
+        if (root.val < low){
+            return trimBST(root.right, low, high);
+        }
+        if (root.val > high){
+            return trimBST(root.left, low, high);
+        }
+        root.left = trimBST(root.left, low, high);
+        root.right = trimBST(root.right, low, high);
+        return root;
+    }
+
     // 617.合并二叉树
     public TreeNode mergeTrees(TreeNode root1, TreeNode root2) {
         if (root1 == null && root2 == null) return null;
@@ -839,6 +891,19 @@ public class NO_41_60 {
             return searchBST(root.left, val);
         }else if (root.val < val){
             return searchBST(root.right, val);
+        }
+        return root;
+    }
+
+    // 701.二叉搜索树中的插入操作
+    public TreeNode insertIntoBST(TreeNode root, int val) {
+        if (root == null){
+            return new TreeNode(val);
+        }
+        if (root.val < val){
+            root.right = insertIntoBST(root.right, val);
+        }else {
+            root.left = insertIntoBST(root.left, val);
         }
         return root;
     }
