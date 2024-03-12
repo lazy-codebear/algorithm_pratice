@@ -1,5 +1,8 @@
 package OnJava;
 
+import java.util.HashMap;
+import java.util.Scanner;
+
 class Egg2{
     protected class Yolk{
         public Yolk(){
@@ -36,6 +39,7 @@ public class BigEgg2 extends Egg2{
     }
 
     public static void main(String[] args) {
+        HashMap<Integer, Integer> hashMap = new HashMap<>();
         Egg2 e2 = new BigEgg2();
         e2.g();
     }

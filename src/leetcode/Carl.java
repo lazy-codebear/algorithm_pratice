@@ -1,7 +1,112 @@
 package leetcode;
 import java.util.*;
 
-public class NO_41_60 {
+public class Carl {
+    // 17.电话号码的字母组合
+    public List<String> letterCombinations(String digits) {
+        List<String> result = new ArrayList<>();
+        if(digits == null || digits.isEmpty()){
+            return result;
+        }
+        char[][] phone_num = {{'a', 'b', 'c'}, {'d', 'e', 'f'}, {'g', 'h', 'i'}, {'j', 'k', 'l'},
+                {'m', 'n', 'o'}, {'p', 'q', 'r', 's'}, {'t', 'u', 'v'}, {'w', 'x', 'y', 'z'}};
+        StringBuffer str = new StringBuffer();
+        getLetterCombine(digits, result, phone_num, 0, str);
+        return result;
+    }
+    public void getLetterCombine(String digits, List<String> result, char[][] phone_num, int index, StringBuffer str){
+        if (index == digits.length()){
+            result.add(str.toString());
+            return;
+        }
+        int num = digits.charAt(index) - 50;
+        for (int i = 0; i < phone_num[num].length; i++){
+            str.append(phone_num[num][i]);
+            getLetterCombine(digits, result, phone_num, index + 1, str);
+            str.deleteCharAt(str.length() - 1);
+        }
+    }
+
+    // 23.合并K个升序链表
+    public ListNode mergeKLists(ListNode[] lists) {
+        if (lists.length == 0) return null;
+        return divide(lists, 0, lists.length);
+    }
+    public ListNode divide(ListNode[] lists, int left, int right){
+        if (left == right) return lists[left];
+        int mid = (left + right) / 2;
+        ListNode list1 = divide(lists, left, mid);
+        ListNode list2 = divide(lists, mid + 1, right);
+        return mergeList(list1, list2);
+    }
+    public ListNode mergeList(ListNode node1, ListNode node2){
+        ListNode dummyHead = new ListNode();
+        while (node1 != null && node2 != null){
+            if (node1.val < node2.val){
+                dummyHead.next = node1;
+                node1 = node1.next;
+            }else {
+                dummyHead.next = node2;
+                node2 = node2.next;
+            }
+            dummyHead = dummyHead.next;
+        }
+        if (node1 != null){
+            dummyHead.next = node1;
+        }else {
+            dummyHead.next = node2;
+        }
+        return dummyHead.next;
+    }
+
+    // 39.组合总和
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<List<Integer>> result = new ArrayList<>();
+        List<Integer> combine = new ArrayList<>();
+        int startIndex = 0;
+        getCombinationSum(candidates, target, result, combine, startIndex);
+        return result;
+    }
+    public void getCombinationSum(int[] candidates, int target, List<List<Integer>> result, List<Integer> combine, int startIndex){
+        if (target == 0){
+            result.add(new ArrayList<>(combine));
+            return;
+        } else if (target < 0){
+            return;
+        }
+        for (int i = startIndex; i < candidates.length; i++){
+            combine.add(candidates[i]);
+            getCombinationSum(candidates, target - candidates[i], result, combine, startIndex);
+            combine.remove(combine.size() - 1);
+            startIndex++;
+        }
+    }
+
+    // 40.组合总和2
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        List<List<Integer>> result = new ArrayList<>();
+        if (candidates.length == 0) return result;
+        List<Integer> combine = new ArrayList<>();
+        Arrays.sort(candidates);
+        getCombine2(candidates, target, 0, result, combine);
+        return result;
+    }
+    public void getCombine2(int[] candidates, int target, int startIndex, List<List<Integer>> result, List<Integer> combine){
+        if (target == 0){
+            result.add(new ArrayList<>(combine));
+            return;
+        }
+        if (startIndex >= candidates.length || candidates[startIndex] > target) return;
+        for (int i = startIndex; i < candidates.length; i++){
+            combine.add(candidates[i]);
+            getCombine2(candidates, target - candidates[i], i + 1, result, combine);
+            combine.remove(combine.size() - 1);
+            while (i + 1 < candidates.length && candidates[i] == candidates[i + 1]){
+                i++;
+            }
+        }
+    }
+
     // 42.接雨水 使用单调递减栈，栈头元素作为底部
     public int trap(int[] height) {
         int result = 0;
@@ -29,6 +134,74 @@ public class NO_41_60 {
             }
         }
         return result;
+    }
+
+    // 51.n皇后
+    public List<List<String>> solveNQueens(int n) {
+        List<List<String>> result = new ArrayList<>();
+        char[][] table = new char[n][n];
+        for (int i = 0; i < n; i++){
+            for (int j = 0; j < n; j++) {
+                table[i][j] = '.';
+            }
+        }
+        List<String> solve = new ArrayList<>();
+        backTrack(result, table, n, 0, solve);
+        return result;
+    }
+    public void backTrack(List<List<String>> result, char[][] table, int n, int startIndex, List<String> solve){
+        if (startIndex >= n){
+            for (int i = 0; i < n; i++){
+                StringBuilder str = new StringBuilder();
+                for (int j = 0; j < n; j++) {
+                    str.append(table[i][j]);
+                }
+                solve.add(str.toString());
+            }
+            result.add(new ArrayList<>(solve));
+            solve.clear();
+            return;
+        }
+        for (int j = 0; j < n; j++) {
+            table[startIndex][j] = 'Q';
+            if (isValid(table, startIndex, j))
+                backTrack(result, table, n, startIndex + 1, solve);
+            table[startIndex][j] = '.';
+        }
+
+    }
+    public boolean isValid(char[][] table, int x, int y){
+        int n = table.length;
+        // check column and row
+        for (int i = 0; i < n; i++) {
+            if (i != x && table[i][y] == 'Q'){
+                return false;
+            }
+            if (i != y && table[x][i] == 'Q'){
+                return false;
+            }
+        }
+        // check diagonal
+        int i = 0, j = 0;
+        if (x > y){
+            i = x - y;
+        }else {
+            j = y - x;
+        }
+        while (i < n && j < n){
+            if (table[i][j] == 'Q' && i != x && j != y){
+                return false;
+            }
+            i++;
+            j++;
+        }
+        for (i = x + 1, j  = y - 1; i < n && j >= 0; i++, j--){
+            if (table[i][j] == 'Q') return false;
+        }
+        for (i = x - 1, j = y + 1; i >= 0 && j < n; i--, j++){
+            if (table[i][j] == 'Q') return false;
+        }
+        return true;
     }
 
     // 54.螺旋矩阵
@@ -166,6 +339,57 @@ public class NO_41_60 {
         return ans.toString();
     }
 
+    // 77.组合
+    public List<List<Integer>> combine(int n, int k) {
+        List<List<Integer>> result = new ArrayList<>();
+        List<Integer> combine = new ArrayList<>();
+        getCombine(result, combine, n, k);
+        return result;
+    }
+    public void getCombine(List<List<Integer>> result, List<Integer> combine, int n, int k){
+        for (int j = n; j >= 1; j--) {
+            combine.add(j);
+            getCombine(result, combine, n - 1, k - 1);
+            combine.remove(combine.size() - 1);
+        }
+
+        if (k == 0){
+            result.add(new ArrayList<>(combine));
+        }
+    }
+
+    // 93.复原IP地址
+    public List<String> restoreIpAddresses(String s) {
+        List<String> result = new ArrayList<>();
+        if (s.length() > 12) return result;
+        List<String> ip = new ArrayList<>();
+        getIpAddresses(s, result, ip, 0);
+        return result;
+    }
+    public void getIpAddresses(String s, List<String> result, List<String> ip, int startIndex){
+        if (ip.size() > 4) return;
+        if (startIndex >= s.length() && ip.size() == 4){
+            StringBuilder temp = new StringBuilder();
+            temp.append(ip.get(0));
+            for (int i = 1; i < ip.size(); i++){
+                temp.append('.');
+                temp.append(ip.get(i));
+            }
+            result.add(temp.toString());
+            return;
+        }
+        for (int i = startIndex; i < s.length(); i++) {
+            String temp = s.substring(startIndex, i + 1);
+            if (i - startIndex <= 3 && Integer.parseInt(temp) <= 255){
+                if (temp.length() > 1 && temp.charAt(0) == '0') continue;
+                ip.add(temp);
+            }else {
+                continue;
+            }
+            getIpAddresses(s, result, ip, i + 1);
+            ip.remove(ip.size() - 1);
+        }
+    }
     // 94.二叉树中序遍历   使用栈进行中序遍历
     public List<Integer> inorderTraversal(TreeNode root) {
         List<Integer> result = new ArrayList<>();
@@ -413,6 +637,38 @@ public class NO_41_60 {
             path.remove(path.size() - 1);
         }
     }
+
+    // 131.分割会文串
+    public List<List<String>> partition(String s) {
+        List<List<String>> result = new ArrayList<>();
+        if (s == null || s.isEmpty()) return result;
+        List<String> part = new ArrayList<>();
+        getPartition(s, result, part, 0);
+        return result;
+    }
+    public void getPartition(String s, List<List<String>> result, List<String> part, int startIndex){
+        if (startIndex >= s.length()){
+            result.add(part);
+            return;
+        }
+        for (int i = startIndex; i < s.length(); i++) {
+            if (isPalindrome(s, startIndex, i)){
+                part.add(s.substring(startIndex, i + 1));
+            }else {
+                continue;
+            }
+            getPartition(s, result, part, i + 1);
+            part.remove(part.size() - 1);
+        }
+    }
+    public boolean isPalindrome(String s, int left, int right){
+        while (left <= right){
+            if (s.charAt(left++) != s.charAt(right--)){
+                return false;
+            }
+        }
+        return true;
+    }
     // 144.二叉树前序遍历
     public List<Integer> preorderTraversal(TreeNode root) {
         List<Integer> result = new ArrayList<>();
@@ -433,6 +689,49 @@ public class NO_41_60 {
         List<Integer> result = new ArrayList<>();
         traversal(root, result);
         return result;
+    }
+
+    // 148.排序链表
+    public ListNode sortList(ListNode head) {
+        return sortList(head, null);
+    }
+    public ListNode sortList(ListNode head, ListNode tail) {
+        if (head == null) return null;
+        if (head.next == tail){
+            head.next = null;
+            return head;
+        }
+        ListNode slow = head, fast = head;
+        while (fast != tail){
+            slow = slow.next;
+            fast = fast.next;
+            if (fast != tail){
+                fast = fast.next;
+            }
+        }
+        ListNode list1 = sortList(head, slow);
+        ListNode list2 = sortList(slow, tail);
+        return merge(list1, list2);
+    }
+    public ListNode merge(ListNode head1, ListNode head2) {
+        ListNode dummyHead = new ListNode(0);
+        ListNode temp = dummyHead, temp1 = head1, temp2 = head2;
+        while (temp1 != null && temp2 != null) {
+            if (temp1.val <= temp2.val) {
+                temp.next = temp1;
+                temp1 = temp1.next;
+            } else {
+                temp.next = temp2;
+                temp2 = temp2.next;
+            }
+            temp = temp.next;
+        }
+        if (temp1 != null) {
+            temp.next = temp1;
+        } else if (temp2 != null) {
+            temp.next = temp2;
+        }
+        return dummyHead.next;
     }
 
     // 150.逆波兰表达式求值
@@ -518,6 +817,33 @@ public class NO_41_60 {
         return result == Integer.MAX_VALUE ? 0 : result;
     }
 
+    // 216.组合总和3
+    public List<List<Integer>> combinationSum3(int k, int n) {
+        List<List<Integer>> result = new ArrayList<>();
+        int[] flag = new int[9];
+        List<Integer> combine = new ArrayList<>();
+        getCombine3(result, flag, combine, k, n, 1);
+        return result;
+    }
+    public void getCombine3(List<List<Integer>> result, int[] flag, List<Integer> combine, int k, int n, int start){
+        if (k == 0 && n == 0){
+            result.add(new ArrayList<>(combine));
+        } else if (k == 0 || (k == 1 && n > 9)) {
+            return;
+        }
+        for (int i = start; i <= 9; i++){
+            if (!combine.isEmpty() && combine.get(combine.size() - 1) > i){
+                return;
+            }
+            if (flag[i - 1] == 0){
+                combine.add(i);
+                flag[i - 1]++;
+                getCombine3(result, flag, combine, k - 1, n - i, i + 1);
+                flag[i - 1]--;
+                combine.remove(combine.size() - 1);
+            }
+        }
+    }
     // 226.反转二叉树
     public TreeNode invertTree(TreeNode root) {
         if (root == null){
@@ -677,6 +1003,25 @@ public class NO_41_60 {
         }
     }
 
+    // 376.摆动序列
+    public int wiggleMaxLength(int[] nums) {
+        int count = 0;
+        boolean positive = true, negative = true;
+        for (int i = 1; i < nums.length; i++){
+            int val = nums[i] - nums[i - 1];
+            if (val > 0 && negative){
+                count++;
+                positive = true;
+                negative = false;
+            }else if (val < 0 && positive){
+                count++;
+                positive = false;
+                negative = true;
+            }
+        }
+        return count + 1;
+    }
+
     // 450.删除二叉搜索树中的节点
     public TreeNode deleteNode(TreeNode root, int key) {
         if (root == null) return null;
@@ -726,6 +1071,21 @@ public class NO_41_60 {
             }
         }
         return result;
+    }
+
+    // 455.分发饼干
+    public int findContentChildren(int[] g, int[] s) {
+        Arrays.sort(g);
+        Arrays.sort(s);
+        int contentChildren = 0;
+        int index = s.length - 1;
+        for (int i = g.length - 1; i >= 0; i--){
+            if (index >= 0 && s[index] >= g[i]){
+                index--;
+                contentChildren++;
+            }
+        }
+        return contentChildren;
     }
 
     // 459.重复的子字符串
@@ -820,6 +1180,25 @@ public class NO_41_60 {
         inorderTraverse_530(root.right, val);
     }
 
+    // 538.把二叉搜索树转换为累加树
+    TreeNode preNode;
+    public TreeNode convertBST(TreeNode root) {
+        if (root == null) return null;
+        if (preNode == null && root.left == null && root.right == null){
+            preNode = root;
+            return root;
+        }
+        root.right = convertBST(root.right);
+        if (preNode == null){
+            preNode = root;
+        }else{
+            root.val += preNode.val;
+            preNode = root;
+        }
+        root.left = convertBST(root.left);
+        return root;
+    }
+
     // 654.最大二叉树
     public TreeNode constructMaximumBinaryTree(int[] nums) {
         int len = nums.length;
@@ -908,10 +1287,11 @@ public class NO_41_60 {
         return root;
     }
     public static void main(String[] args) {
-        NO_41_60 test = new NO_41_60();
-        int[] num1 = {3,2,1,6,0,5};
+        Carl test = new Carl();
+        int[] num1 = {10, 1, 2, 7, 6, 1, 5};
         int[] num2 = {9,15,7,20,3};
-        test.constructMaximumBinaryTree(num1);
+        String s = "25525511135";
+        test.solveNQueens(4);
     }
 }
 
